@@ -1,0 +1,16 @@
+# Build directories
+build/
+*--build-*/
+*.user
+.vs/
+CMakeCache.txt
+CMakeFiles/
+cmake-install.cmake
+cmake_install.cmake
+Makefile
+*.cmake
+*.o
+*.obj
+*.exe
+*.app
+*.aps
