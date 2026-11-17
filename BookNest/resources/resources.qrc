@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>schema.sql</file>
+        <file>seed.sql</file>
+    </qresource>
+</RCC>
