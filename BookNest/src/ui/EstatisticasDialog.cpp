@@ -1,4 +1,5 @@
 #include "EstatisticasDialog.h"
+#include "core/Trace.h"
 
 #include <QComboBox>
 #include <QDate>
@@ -23,7 +24,7 @@ QString isoParaBr(const QString& iso) {
 }
 }  // namespace
 
-EstatisticasDialog::EstatisticasDialog(QWidget* parent) : QDialog(parent) {
+EstatisticasDialog::EstatisticasDialog(QWidget* parent) : QDialog(parent) { BN_TRACE("EstatisticasDialog::EstatisticasDialog");
     setWindowTitle(tr("Histórico e estatísticas de leitura"));
     resize(760, 520);
 
@@ -70,7 +71,7 @@ EstatisticasDialog::EstatisticasDialog(QWidget* parent) : QDialog(parent) {
     carregarHistorico();
 }
 
-void EstatisticasDialog::carregarAno() {
+void EstatisticasDialog::carregarAno() { BN_TRACE("EstatisticasDialog::carregarAno");
     const int ano = m_ano->currentData().toInt();
     const auto e = m_repo.anual(ano);
     QString html = tr("<p><b>Livros lidos em %1:</b> %2<br>"
@@ -97,7 +98,7 @@ void EstatisticasDialog::carregarAno() {
     }
 }
 
-void EstatisticasDialog::carregarHistorico() {
+void EstatisticasDialog::carregarHistorico() { BN_TRACE("EstatisticasDialog::carregarHistorico");
     const auto linhas = m_repo.historicoConcluidos();
     m_historico->setRowCount(linhas.size());
     for (int i = 0; i < linhas.size(); ++i) {

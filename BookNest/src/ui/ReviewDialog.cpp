@@ -1,4 +1,5 @@
 #include "ReviewDialog.h"
+#include "core/Trace.h"
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -41,7 +42,7 @@ ReviewDialog::ReviewDialog(const QString& titulo, int notaAtual, const QString& 
     lay->addWidget(buttons);
 }
 
-int ReviewDialog::nota() const { return m_nota->currentData().toInt(); }
-QString ReviewDialog::resenha() const { return m_resenha->toPlainText(); }
+int ReviewDialog::nota() const { BN_TRACE("ReviewDialog::nota"); return m_nota->currentData().toInt(); }
+QString ReviewDialog::resenha() const { BN_TRACE("ReviewDialog::resenha"); return m_resenha->toPlainText(); }
 
 }  // namespace booknest

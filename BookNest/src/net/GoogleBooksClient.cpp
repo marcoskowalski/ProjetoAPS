@@ -1,4 +1,5 @@
 #include "GoogleBooksClient.h"
+#include "core/Trace.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -14,12 +15,12 @@ namespace booknest {
 
 GoogleBooksClient::GoogleBooksClient(QObject* parent) : QObject(parent) {}
 
-void GoogleBooksClient::buscar(const QString& termo) {
+void GoogleBooksClient::buscar(const QString& termo) { BN_TRACE("GoogleBooksClient::buscar");
     m_termo = termo.trimmed();
     buscarGoogle();
 }
 
-void GoogleBooksClient::buscarGoogle() {
+void GoogleBooksClient::buscarGoogle() { BN_TRACE("GoogleBooksClient::buscarGoogle");
     QUrl url(QStringLiteral("https://www.googleapis.com/books/v1/volumes"));
     QUrlQuery query;
     query.addQueryItem(QStringLiteral("q"), m_termo);
@@ -31,6 +32,7 @@ void GoogleBooksClient::buscarGoogle() {
 
     QNetworkRequest req(url);
     req.setTransferTimeout(10000);
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     QNetworkReply* reply = m_net.get(req);
     connect(reply, &QNetworkReply::finished, this, [this, reply]() {
         reply->deleteLater();
@@ -47,7 +49,7 @@ void GoogleBooksClient::buscarGoogle() {
     });
 }
 
-void GoogleBooksClient::buscarOpenLibrary(const QString& erroGoogle) {
+void GoogleBooksClient::buscarOpenLibrary(const QString& erroGoogle) { BN_TRACE("GoogleBooksClient::buscarOpenLibrary");
     QUrl url(QStringLiteral("https://openlibrary.org/search.json"));
     QUrlQuery query;
     query.addQueryItem(QStringLiteral("q"), m_termo);
@@ -58,22 +60,24 @@ void GoogleBooksClient::buscarOpenLibrary(const QString& erroGoogle) {
     url.setQuery(query);
 
     QNetworkRequest req(url);
-    req.setTransferTimeout(10000);
+    req.setTransferTimeout(30000);  // a Open Library pode demorar alguns segundos
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     req.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("BookNest/1.0 (projeto academico)"));
     QNetworkReply* reply = m_net.get(req);
     connect(reply, &QNetworkReply::finished, this, [this, reply, erroGoogle]() {
         reply->deleteLater();
         if (reply->error() != QNetworkReply::NoError) {
             emit failed(QStringLiteral("Não foi possível pesquisar livros na internet. Verifique sua "
-                                       "conexão e tente novamente em instantes.\n(%1)")
-                            .arg(erroGoogle.isEmpty() ? reply->errorString() : erroGoogle));
+                                       "conexão e tente novamente em instantes.\n\nGoogle Books: %1\nOpen Library: %2")
+                            .arg(erroGoogle.isEmpty() ? QStringLiteral("sem resultados") : erroGoogle,
+                                 reply->errorString()));
             return;
         }
         emit resultados(parseOpenLibrary(reply->readAll()));
     });
 }
 
-QList<Livro> GoogleBooksClient::parseOpenLibrary(const QByteArray& json) {
+QList<Livro> GoogleBooksClient::parseOpenLibrary(const QByteArray& json) { BN_TRACE("GoogleBooksClient::parseOpenLibrary");
     QList<Livro> out;
     const QJsonArray docs = QJsonDocument::fromJson(json).object().value(QStringLiteral("docs")).toArray();
     for (const QJsonValue& v : docs) {
@@ -103,7 +107,7 @@ QList<Livro> GoogleBooksClient::parseOpenLibrary(const QByteArray& json) {
     return out;
 }
 
-QList<Livro> GoogleBooksClient::parseResposta(const QByteArray& json) {
+QList<Livro> GoogleBooksClient::parseResposta(const QByteArray& json) { BN_TRACE("GoogleBooksClient::parseResposta");
     QList<Livro> out;
     const QJsonObject root = QJsonDocument::fromJson(json).object();
     const QJsonArray items = root.value(QStringLiteral("items")).toArray();

@@ -1,4 +1,5 @@
 #include "EstatisticaRepository.h"
+#include "core/Trace.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -12,7 +13,7 @@ namespace {
 QSqlDatabase db() { return DatabaseManager::instance().database(); }
 }  // namespace
 
-QList<int> EstatisticaRepository::anosComLeitura() const {
+QList<int> EstatisticaRepository::anosComLeitura() const { BN_TRACE("EstatisticaRepository::anosComLeitura");
     QList<int> out;
     QSqlQuery q(QStringLiteral(
                     "SELECT DISTINCT CAST(substr(data_fim, 1, 4) AS INTEGER) AS ano FROM leitura "
@@ -22,7 +23,7 @@ QList<int> EstatisticaRepository::anosComLeitura() const {
     return out;
 }
 
-EstatisticaAnual EstatisticaRepository::anual(int ano) const {
+EstatisticaAnual EstatisticaRepository::anual(int ano) const { BN_TRACE("EstatisticaRepository::anual");
     EstatisticaAnual e;
     e.ano = ano;
     const QString anoStr = QString::number(ano);
@@ -59,7 +60,7 @@ EstatisticaAnual EstatisticaRepository::anual(int ano) const {
     return e;
 }
 
-QList<QPair<int, int>> EstatisticaRepository::lidosPorMes(int ano) const {
+QList<QPair<int, int>> EstatisticaRepository::lidosPorMes(int ano) const { BN_TRACE("EstatisticaRepository::lidosPorMes");
     QList<QPair<int, int>> out;
     for (int m = 1; m <= 12; ++m) out << qMakePair(m, 0);
     QSqlQuery q(db());
@@ -76,7 +77,7 @@ QList<QPair<int, int>> EstatisticaRepository::lidosPorMes(int ano) const {
     return out;
 }
 
-QList<LinhaHistorico> EstatisticaRepository::historicoConcluidos() const {
+QList<LinhaHistorico> EstatisticaRepository::historicoConcluidos() const { BN_TRACE("EstatisticaRepository::historicoConcluidos");
     QList<LinhaHistorico> out;
     QSqlQuery q(QStringLiteral(
                     "SELECT l.titulo, a.nome, r.data_inicio, r.data_fim, r.nota, l.total_paginas "

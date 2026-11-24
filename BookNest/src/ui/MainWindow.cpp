@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "core/Trace.h"
 
 #include <QAction>
 #include <QApplication>
@@ -210,7 +211,7 @@ qint64 MainWindow::livroSelecionado(bool avisar) {
     return m_model->data(m_model->index(idx.row(), CId)).toLongLong();
 }
 
-void MainWindow::recarregarGeneros() {
+void MainWindow::recarregarGeneros() { BN_TRACE("MainWindow::recarregarGeneros");
     const QString atual = m_filtroGenero->currentData().toString();
     m_filtroGenero->blockSignals(true);
     m_filtroGenero->clear();
@@ -221,7 +222,7 @@ void MainWindow::recarregarGeneros() {
     m_filtroGenero->blockSignals(false);
 }
 
-void MainWindow::aplicarFiltro() {
+void MainWindow::aplicarFiltro() { BN_TRACE("MainWindow::aplicarFiltro");
     QStringList cond;
     const QString termo = m_busca->text().trimmed();
     if (!termo.isEmpty()) {
@@ -239,7 +240,7 @@ void MainWindow::aplicarFiltro() {
     m_contador->setText(tr("%1 livro(s) exibido(s)").arg(m_model->rowCount()));  // FE01: vazio é válido
 }
 
-void MainWindow::recarregar() {
+void MainWindow::recarregar() { BN_TRACE("MainWindow::recarregar");
     const qint64 id = livroSelecionado(false);
     recarregarGeneros();
     aplicarFiltro();
@@ -252,7 +253,7 @@ void MainWindow::recarregar() {
     }
 }
 
-void MainWindow::cadastrar() {
+void MainWindow::cadastrar() { BN_TRACE("MainWindow::cadastrar");
     BookDialog dlg(m_livros.autores(), m_livros.generos(), nullptr, this);
     if (dlg.exec() != QDialog::Accepted) return;
     QString erro;
@@ -264,7 +265,7 @@ void MainWindow::cadastrar() {
     mensagem(tr("Livro cadastrado com sucesso."));
 }
 
-void MainWindow::editar() {
+void MainWindow::editar() { BN_TRACE("MainWindow::editar");
     const qint64 id = livroSelecionado();
     if (id == 0) return;
     auto livro = m_livros.buscar(id);
@@ -283,7 +284,7 @@ void MainWindow::editar() {
     mensagem(tr("Livro atualizado."));
 }
 
-void MainWindow::remover() {
+void MainWindow::remover() { BN_TRACE("MainWindow::remover");
     const qint64 id = livroSelecionado();
     if (id == 0) return;
     auto livro = m_livros.buscar(id);
@@ -303,7 +304,7 @@ void MainWindow::remover() {
     mensagem(tr("Livro removido."));
 }
 
-void MainWindow::registrarProgresso() {
+void MainWindow::registrarProgresso() { BN_TRACE("MainWindow::registrarProgresso");
     const qint64 id = livroSelecionado();
     if (id == 0) return;
     auto livro = m_livros.buscar(id);
@@ -342,7 +343,7 @@ void MainWindow::registrarProgresso() {
         mensagem(tr("Progresso atualizado: %1%").arg(out.percent, 0, 'f', 1));
 }
 
-void MainWindow::avaliar() {
+void MainWindow::avaliar() { BN_TRACE("MainWindow::avaliar");
     const qint64 id = livroSelecionado();
     if (id == 0) return;
     auto livro = m_livros.buscar(id);
@@ -364,7 +365,7 @@ void MainWindow::avaliar() {
     mensagem(tr("Avaliação salva."));
 }
 
-void MainWindow::alterarStatus(core::Status novo) {
+void MainWindow::alterarStatus(core::Status novo) { BN_TRACE("MainWindow::alterarStatus");
     const qint64 id = livroSelecionado();
     if (id == 0) return;
     QString erro;
@@ -410,17 +411,17 @@ void MainWindow::verDetalhes() {
     box.exec();
 }
 
-void MainWindow::abrirListas() {
+void MainWindow::abrirListas() { BN_TRACE("MainWindow::abrirListas");
     ListasDialog dlg(this);
     dlg.exec();
 }
 
-void MainWindow::abrirEstatisticas() {
+void MainWindow::abrirEstatisticas() { BN_TRACE("MainWindow::abrirEstatisticas");
     EstatisticasDialog dlg(this);
     dlg.exec();
 }
 
-void MainWindow::buscarNaWeb() {
+void MainWindow::buscarNaWeb() { BN_TRACE("MainWindow::buscarNaWeb");
     GoogleBooksDialog dlg(this);
     dlg.exec();
     if (dlg.adicionouLivro()) recarregar();

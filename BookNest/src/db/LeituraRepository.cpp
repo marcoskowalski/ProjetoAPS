@@ -1,4 +1,5 @@
 #include "LeituraRepository.h"
+#include "core/Trace.h"
 
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -21,7 +22,7 @@ int totalPaginas(qint64 idLivro) {
 }
 }  // namespace
 
-std::optional<Leitura> LeituraRepository::porLivro(qint64 idLivro) const {
+std::optional<Leitura> LeituraRepository::porLivro(qint64 idLivro) const { BN_TRACE("LeituraRepository::porLivro");
     QSqlQuery q(db());
     q.prepare(QStringLiteral(
         "SELECT id, id_livro, status, pagina_atual, data_inicio, data_fim, nota, resenha "
@@ -40,7 +41,7 @@ std::optional<Leitura> LeituraRepository::porLivro(qint64 idLivro) const {
     return l;
 }
 
-bool LeituraRepository::alterarStatus(qint64 idLivro, Status novo, QString* erro) {
+bool LeituraRepository::alterarStatus(qint64 idLivro, Status novo, QString* erro) { BN_TRACE("LeituraRepository::alterarStatus");
     auto l = porLivro(idLivro);
     if (!l) {
         if (erro) *erro = QStringLiteral("Livro não encontrado.");
@@ -75,7 +76,7 @@ bool LeituraRepository::alterarStatus(qint64 idLivro, Status novo, QString* erro
 }
 
 bool LeituraRepository::registrarProgresso(qint64 idLivro, int novaPagina,
-                                           core::ProgressOutcome* resultado, QString* erro) {
+                                           core::ProgressOutcome* resultado, QString* erro) { BN_TRACE("LeituraRepository::registrarProgresso");
     auto l = porLivro(idLivro);
     if (!l) {
         if (erro) *erro = QStringLiteral("Livro não encontrado.");
@@ -132,7 +133,7 @@ bool LeituraRepository::registrarProgresso(qint64 idLivro, int novaPagina,
     return true;
 }
 
-bool LeituraRepository::avaliar(qint64 idLivro, int nota, const QString& resenha, QString* erro) {
+bool LeituraRepository::avaliar(qint64 idLivro, int nota, const QString& resenha, QString* erro) { BN_TRACE("LeituraRepository::avaliar");
     auto l = porLivro(idLivro);
     if (!l) {
         if (erro) *erro = QStringLiteral("Livro não encontrado.");

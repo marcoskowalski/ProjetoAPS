@@ -1,4 +1,5 @@
 #include "GoogleBooksDialog.h"
+#include "core/Trace.h"
 
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -59,14 +60,14 @@ GoogleBooksDialog::GoogleBooksDialog(QWidget* parent) : QDialog(parent) {
     });
 }
 
-void GoogleBooksDialog::buscar() {
+void GoogleBooksDialog::buscar() { BN_TRACE("GoogleBooksDialog::buscar");
     if (m_termo->text().trimmed().isEmpty()) return;
     m_btnBuscar->setEnabled(false);
     m_status->setText(tr("Buscando…"));
     m_client.buscar(m_termo->text());
 }
 
-void GoogleBooksDialog::mostrar(const QList<Livro>& livros) {
+void GoogleBooksDialog::mostrar(const QList<Livro>& livros) { BN_TRACE("GoogleBooksDialog::mostrar");
     m_btnBuscar->setEnabled(true);
     m_resultados = livros;
     m_tabela->setRowCount(livros.size());
@@ -81,7 +82,7 @@ void GoogleBooksDialog::mostrar(const QList<Livro>& livros) {
     m_status->setText(livros.isEmpty() ? tr("Nenhum resultado.") : tr("%1 resultado(s).").arg(livros.size()));
 }
 
-void GoogleBooksDialog::adicionarSelecionado() {
+void GoogleBooksDialog::adicionarSelecionado() { BN_TRACE("GoogleBooksDialog::adicionarSelecionado");
     const int row = m_tabela->currentRow();
     if (row < 0 || row >= m_resultados.size()) {
         QMessageBox::information(this, tr("Adicionar"), tr("Selecione um livro da lista."));

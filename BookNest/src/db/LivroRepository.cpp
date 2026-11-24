@@ -1,4 +1,5 @@
 #include "LivroRepository.h"
+#include "core/Trace.h"
 
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -41,7 +42,7 @@ QString traduzErro(const QSqlError& e) {
 }
 }  // namespace
 
-std::optional<qint64> LivroRepository::inserir(const Livro& l, QString* erro) {
+std::optional<qint64> LivroRepository::inserir(const Livro& l, QString* erro) { BN_TRACE("LivroRepository::inserir");
     QSqlDatabase d = db();
     if (!d.transaction()) {
         if (erro) *erro = d.lastError().text();
@@ -89,7 +90,7 @@ std::optional<qint64> LivroRepository::inserir(const Livro& l, QString* erro) {
     return idLivro;
 }
 
-bool LivroRepository::atualizar(const Livro& l, QString* erro) {
+bool LivroRepository::atualizar(const Livro& l, QString* erro) { BN_TRACE("LivroRepository::atualizar");
     QSqlDatabase d = db();
     if (!d.transaction()) {
         if (erro) *erro = d.lastError().text();
@@ -138,7 +139,7 @@ bool LivroRepository::atualizar(const Livro& l, QString* erro) {
     return true;
 }
 
-bool LivroRepository::remover(qint64 idLivro, QString* erro) {
+bool LivroRepository::remover(qint64 idLivro, QString* erro) { BN_TRACE("LivroRepository::remover");
     QSqlQuery q(db());
     q.prepare(QStringLiteral("DELETE FROM livro WHERE id = ?"));  // ON DELETE CASCADE limpa o resto
     q.addBindValue(idLivro);
@@ -153,7 +154,7 @@ bool LivroRepository::remover(qint64 idLivro, QString* erro) {
     return true;
 }
 
-std::optional<Livro> LivroRepository::buscar(qint64 idLivro) const {
+std::optional<Livro> LivroRepository::buscar(qint64 idLivro) const { BN_TRACE("LivroRepository::buscar");
     QSqlQuery q(db());
     q.prepare(QStringLiteral(
         "SELECT l.id, l.titulo, a.nome, g.nome, l.isbn, l.ano_publicacao, l.total_paginas, "
@@ -175,21 +176,21 @@ std::optional<Livro> LivroRepository::buscar(qint64 idLivro) const {
     return l;
 }
 
-QStringList LivroRepository::autores() const {
+QStringList LivroRepository::autores() const { BN_TRACE("LivroRepository::autores");
     QStringList out;
     QSqlQuery q(QStringLiteral("SELECT nome FROM autor ORDER BY nome COLLATE NOCASE"), db());
     while (q.next()) out << q.value(0).toString();
     return out;
 }
 
-QStringList LivroRepository::generos() const {
+QStringList LivroRepository::generos() const { BN_TRACE("LivroRepository::generos");
     QStringList out;
     QSqlQuery q(QStringLiteral("SELECT nome FROM genero ORDER BY nome COLLATE NOCASE"), db());
     while (q.next()) out << q.value(0).toString();
     return out;
 }
 
-QList<Livro> LivroRepository::todos() const {
+QList<Livro> LivroRepository::todos() const { BN_TRACE("LivroRepository::todos");
     QList<Livro> out;
     QSqlQuery q(QStringLiteral("SELECT l.id, l.titulo, a.nome FROM livro l "
                                "JOIN autor a ON a.id = l.id_autor ORDER BY l.titulo COLLATE NOCASE"),

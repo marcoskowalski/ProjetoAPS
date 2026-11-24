@@ -1,4 +1,5 @@
 #include "ListasDialog.h"
+#include "core/Trace.h"
 
 #include <QHBoxLayout>
 #include <QInputDialog>
@@ -60,7 +61,7 @@ qint64 ListasDialog::listaAtual() const {
     return it ? it->data(Qt::UserRole).toLongLong() : 0;
 }
 
-void ListasDialog::recarregarListas(qint64 selecionar) {
+void ListasDialog::recarregarListas(qint64 selecionar) { BN_TRACE("ListasDialog::recarregarListas");
     m_wListas->blockSignals(true);
     m_wListas->clear();
     int row = 0, i = 0;
@@ -89,7 +90,7 @@ void ListasDialog::recarregarLivros() {
     }
 }
 
-void ListasDialog::novaLista() {
+void ListasDialog::novaLista() { BN_TRACE("ListasDialog::novaLista");
     bool ok = false;
     const QString nome = QInputDialog::getText(this, tr("Nova lista"), tr("Nome da lista:"),
                                                QLineEdit::Normal, QString(), &ok);
@@ -118,7 +119,7 @@ void ListasDialog::removerLista() {
     recarregarListas();
 }
 
-void ListasDialog::adicionarLivro() {
+void ListasDialog::adicionarLivro() { BN_TRACE("ListasDialog::adicionarLivro");
     const qint64 id = listaAtual();
     if (id == 0) {
         QMessageBox::information(this, tr("Listas"), tr("Crie ou selecione uma lista primeiro."));

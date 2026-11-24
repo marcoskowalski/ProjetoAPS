@@ -1,4 +1,5 @@
 #include "BookDialog.h"
+#include "core/Trace.h"
 
 #include <QComboBox>
 #include <QCompleter>
@@ -72,7 +73,7 @@ BookDialog::BookDialog(const QStringList& autores, const QStringList& generos,
     }
 }
 
-Livro BookDialog::livro() const {
+Livro BookDialog::livro() const { BN_TRACE("BookDialog::livro");
     Livro l;
     l.id = m_id;
     l.titulo = m_titulo->text().trimmed();
@@ -87,7 +88,7 @@ Livro BookDialog::livro() const {
     return l;
 }
 
-void BookDialog::accept() {
+void BookDialog::accept() { BN_TRACE("BookDialog::accept");
     const Livro l = livro();
     const auto r = core::validateBook(l.titulo.toStdString(), l.autor.toStdString(),
                                       l.genero.toStdString(), l.totalPaginas, l.anoPublicacao,

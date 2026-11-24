@@ -1,4 +1,5 @@
 #include "ReadingRules.h"
+#include "Trace.h"
 
 #include <algorithm>
 #include <cctype>
@@ -74,7 +75,7 @@ bool isValidIsbn(std::string_view isbn) {
 }
 
 Result validateBook(std::string_view titulo, std::string_view autor, std::string_view genero,
-                    int totalPaginas, int anoPublicacao, std::string_view isbn) {
+                    int totalPaginas, int anoPublicacao, std::string_view isbn) { BN_TRACE("ReadingRules::validateBook");
     if (trim(titulo).empty()) return Result::fail("O título é obrigatório.");            // RN001
     if (trim(autor).empty()) return Result::fail("O autor é obrigatório.");
     if (trim(genero).empty()) return Result::fail("O gênero é obrigatório.");
@@ -87,14 +88,14 @@ Result validateBook(std::string_view titulo, std::string_view autor, std::string
     return Result::success();
 }
 
-double progressPercent(int paginaAtual, int totalPaginas) {
+double progressPercent(int paginaAtual, int totalPaginas) { BN_TRACE("ReadingRules::progressPercent");
     if (totalPaginas <= 0) return 0.0;
     double p = 100.0 * static_cast<double>(paginaAtual) / static_cast<double>(totalPaginas);
     p = std::clamp(p, 0.0, 100.0);
     return std::round(p * 10.0) / 10.0;
 }
 
-ProgressOutcome applyProgress(Status atual, int paginaAnterior, int novaPagina, int totalPaginas) {
+ProgressOutcome applyProgress(Status atual, int paginaAnterior, int novaPagina, int totalPaginas) { BN_TRACE("ReadingRules::applyProgress");
     ProgressOutcome out;
     out.newStatus = atual;
     if (atual != Status::Lendo) {
@@ -144,7 +145,7 @@ StatusChange applyStatusChange(Status de, Status para, int paginaAtual, int tota
     return c;
 }
 
-Result validateRating(Status atual, int nota) {
+Result validateRating(Status atual, int nota) { BN_TRACE("ReadingRules::validateRating");
     if (atual != Status::Lido)
         return Result::fail("Só é possível avaliar livros com status \"Lido\".");
     if (nota < 1 || nota > 5) return Result::fail("A nota deve estar entre 1 e 5 estrelas.");

@@ -1,4 +1,5 @@
 #include "ListaRepository.h"
+#include "core/Trace.h"
 
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -18,7 +19,7 @@ QString traduz(const QSqlError& e, const QString& msgUnique) {
 }  // namespace
 
 std::optional<qint64> ListaRepository::criar(const QString& nome, const QString& descricao,
-                                             QString* erro) {
+                                             QString* erro) { BN_TRACE("ListaRepository::criar");
     if (nome.trimmed().isEmpty()) {
         if (erro) *erro = QStringLiteral("O nome da lista é obrigatório.");
         return std::nullopt;
@@ -47,7 +48,7 @@ bool ListaRepository::remover(qint64 idLista, QString* erro) {
     return true;
 }
 
-QList<ListaTematica> ListaRepository::listar() const {
+QList<ListaTematica> ListaRepository::listar() const { BN_TRACE("ListaRepository::listar");
     QList<ListaTematica> out;
     QSqlQuery q(QStringLiteral(
                     "SELECT t.id, t.nome, t.descricao, t.data_criacao, COUNT(ll.id_livro) "
@@ -66,7 +67,7 @@ QList<ListaTematica> ListaRepository::listar() const {
     return out;
 }
 
-bool ListaRepository::adicionarLivro(qint64 idLista, qint64 idLivro, QString* erro) {
+bool ListaRepository::adicionarLivro(qint64 idLista, qint64 idLivro, QString* erro) { BN_TRACE("ListaRepository::adicionarLivro");
     QSqlQuery q(db());
     q.prepare(QStringLiteral(
         "INSERT INTO lista_livro(id_lista, id_livro, data_adicao) VALUES (?, ?, ?)"));
@@ -92,7 +93,7 @@ bool ListaRepository::removerLivro(qint64 idLista, qint64 idLivro, QString* erro
     return true;
 }
 
-QList<Livro> ListaRepository::livros(qint64 idLista) const {
+QList<Livro> ListaRepository::livros(qint64 idLista) const { BN_TRACE("ListaRepository::livros");
     QList<Livro> out;
     QSqlQuery q(db());
     q.prepare(QStringLiteral(

@@ -11,6 +11,13 @@ set(CMAKE_AUTORCC ON)
 add_library(booknest_core STATIC src/core/ReadingRules.cpp)
 target_include_directories(booknest_core PUBLIC src)
 
+# Rastreamento opcional das chamadas (confere a ordem dos diagramas de sequência). Desligado por padrão.
+# Para ligar: CMake options  -DBOOKNEST_TRACE=ON  (escreve no console e em trace.log)
+option(BOOKNEST_TRACE "Escrever o rastreamento das chamadas (Classe::metodo)" OFF)
+if(BOOKNEST_TRACE)
+    target_compile_definitions(booknest_core PUBLIC BOOKNEST_TRACE)
+endif()
+
 enable_testing()
 add_executable(test_core tests/test_core.cpp)
 target_link_libraries(test_core PRIVATE booknest_core)

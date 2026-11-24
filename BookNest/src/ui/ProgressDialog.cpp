@@ -1,4 +1,5 @@
 #include "ProgressDialog.h"
+#include "core/Trace.h"
 
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -48,9 +49,9 @@ ProgressDialog::ProgressDialog(const QString& titulo, int paginaAtual, int total
     atualizar();
 }
 
-int ProgressDialog::novaPagina() const { return m_pagina->value(); }
+int ProgressDialog::novaPagina() const { BN_TRACE("ProgressDialog::novaPagina"); return m_pagina->value(); }
 
-void ProgressDialog::atualizar() {
+void ProgressDialog::atualizar() { BN_TRACE("ProgressDialog::atualizar");
     const double pct = core::progressPercent(m_pagina->value(), m_total);
     m_barra->setValue(static_cast<int>(pct * 10));
     m_barra->setFormat(QStringLiteral("%1%").arg(pct, 0, 'f', 1));
